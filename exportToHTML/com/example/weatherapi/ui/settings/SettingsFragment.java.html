@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>SettingsFragment.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SettingsFragment.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.weatherapi.ui.settings</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Intent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.LayoutInflater</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.View</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.ViewGroup</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.Nullable</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.databinding.DataBindingComponent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.databinding.DataBindingUtil</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.fragment.app.DialogFragment</span><span class="s0">;</span>
+
+
+<span class="s0">import </span><span class="s1">com.example.weatherapi.MainActivity</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.R</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.binding.FragmentDataBindingComponent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.databinding.SettingsFragmentBinding</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.di.Injectable</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.ui.NavigationController</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.util.AutoClearedValue</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.util.SharedPreferences</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.inject.Inject</span><span class="s0">;</span>
+
+<span class="s0">public class</span>
+<span class="s1">SettingsFragment </span><span class="s0">extends </span><span class="s1">DialogFragment </span><span class="s0">implements </span><span class="s1">Injectable {</span>
+
+    <span class="s1">@Inject</span>
+    <span class="s1">NavigationController navigationController</span><span class="s0">;</span>
+
+    <span class="s1">DataBindingComponent dataBindingComponent = </span><span class="s0">new </span><span class="s1">FragmentDataBindingComponent(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+    <span class="s1">AutoClearedValue&lt;SettingsFragmentBinding&gt; binding</span><span class="s0">;</span>
+
+    <span class="s0">public static </span><span class="s1">SettingsFragment create() {</span>
+        <span class="s1">SettingsFragment settingsFragment = </span><span class="s0">new </span><span class="s1">SettingsFragment()</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">settingsFragment</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Nullable</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">View onCreateView(LayoutInflater inflater</span><span class="s0">, </span><span class="s1">@Nullable ViewGroup container</span><span class="s0">, </span><span class="s1">@Nullable Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreateView(inflater</span><span class="s0">, </span><span class="s1">container</span><span class="s0">, </span><span class="s1">savedInstanceState)</span><span class="s0">;</span>
+        <span class="s1">SettingsFragmentBinding dataBinding = DataBindingUtil</span>
+                <span class="s1">.inflate(inflater</span><span class="s0">, </span><span class="s1">R.layout.settings_fragment</span><span class="s0">, </span><span class="s1">container</span><span class="s0">, false,</span>
+                        <span class="s1">dataBindingComponent)</span><span class="s0">;</span>
+        <span class="s1">binding = </span><span class="s0">new </span><span class="s1">AutoClearedValue&lt;&gt;(</span><span class="s0">this, </span><span class="s1">dataBinding)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">dataBinding.getRoot()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onActivityCreated(@Nullable Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onActivityCreated(savedInstanceState)</span><span class="s0">;</span>
+
+        <span class="s1">binding.get().setSettingsFragment(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">binding.get().setCity(SharedPreferences.getInstance(getContext()).getCity())</span><span class="s0">;</span>
+        <span class="s1">binding.get().setNumDays(SharedPreferences.getInstance(getContext()).getNumDays())</span><span class="s0">;</span>
+        <span class="s1">binding.get().executePendingBindings()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">didTapCancel(View view) {</span>
+        <span class="s1">dismiss()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">didTapOk(View view) {</span>
+
+        <span class="s1">String newCity = binding.get().etSettingsCity.getText().toString()</span><span class="s0">;</span>
+        <span class="s1">String newNumDays = binding.get().etSettingsNumDays.getText().toString()</span><span class="s0">;</span>
+
+        <span class="s1">SharedPreferences.getInstance(getContext()).putStringValue(SharedPreferences.CITY</span><span class="s0">, </span><span class="s1">newCity)</span><span class="s0">;</span>
+        <span class="s1">SharedPreferences.getInstance(getContext()).putStringValue(SharedPreferences.NUM_DAYS</span><span class="s0">, </span><span class="s1">newNumDays)</span><span class="s0">;</span>
+
+        <span class="s1">Intent intent = </span><span class="s0">new </span><span class="s1">Intent(getContext()</span><span class="s0">, </span><span class="s1">MainActivity.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">startActivity(intent)</span><span class="s0">;</span>
+
+        <span class="s1">dismiss()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

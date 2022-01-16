@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.example.weatherapi</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">androidx.annotation.NonNull</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.appcompat.app.AppCompatActivity</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.core.content.ContextCompat</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.core.view.GravityCompat</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.drawerlayout.widget.DrawerLayout</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.fragment.app.Fragment</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.lifecycle.ViewModelProvider</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.navigation.NavController</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.navigation.Navigation</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.navigation.ui.AppBarConfiguration</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">androidx.navigation.ui.NavigationUI</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">android.content.Intent</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.graphics.drawable.ColorDrawable</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.os.Bundle</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.Menu</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuInflater</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">android.view.MenuItem</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">com.example.weatherapi.ui.NavigationController</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.example.weatherapi.util.SharedPreferences</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.google.android.material.bottomnavigation.BottomNavigationView</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.google.android.material.navigation.NavigationView</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.inject.Inject</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">dagger.android.DispatchingAndroidInjector</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">dagger.android.support.HasSupportFragmentInjector</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">MainActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity </span><span class="s0">implements </span><span class="s1">HasSupportFragmentInjector</span><span class="s0">, </span><span class="s1">NavigationView.OnNavigationItemSelectedListener {</span>
+
+    <span class="s0">private </span><span class="s1">AppBarConfiguration mAppBarConfiguration</span><span class="s0">;</span>
+    <span class="s1">DrawerLayout drawer</span><span class="s0">;</span>
+
+    <span class="s1">@Inject</span>
+    <span class="s1">ViewModelProvider.Factory viewModelFactory</span><span class="s0">;</span>
+
+    <span class="s1">@Inject</span>
+    <span class="s1">DispatchingAndroidInjector&lt;Fragment&gt; dispatchingAndroidInjector</span><span class="s0">;</span>
+
+    <span class="s1">@Inject</span>
+    <span class="s1">NavigationController navigationController</span><span class="s0">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) {</span>
+        <span class="s0">super</span><span class="s1">.onCreate(savedInstanceState)</span><span class="s0">;</span>
+        <span class="s1">setContentView(R.layout.activity_main)</span><span class="s0">;</span>
+        <span class="s1">BottomNavigationView navView = findViewById(R.id.nav_view)</span><span class="s0">;</span>
+
+        <span class="s2">//getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);</span>
+        <span class="s1">getSupportActionBar().setBackgroundDrawable(</span><span class="s0">new </span><span class="s1">ColorDrawable(ContextCompat.getColor(</span><span class="s0">this,</span><span class="s1">R.color.transparent)))</span><span class="s0">;</span>
+
+        <span class="s1">drawer = findViewById(R.id.drawerLayout)</span><span class="s0">;</span>
+        <span class="s1">NavigationView navigationView = findViewById(R.id.navView)</span><span class="s0">;</span>
+        <span class="s1">navigationView.setNavigationItemSelectedListener(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+
+        <span class="s1">mAppBarConfiguration = </span><span class="s0">new </span><span class="s1">AppBarConfiguration.Builder(</span>
+                <span class="s1">R.id.navigation_today</span><span class="s0">, </span><span class="s1">R.id.navigation_weekly</span><span class="s0">, </span><span class="s1">R.id.navigation_share</span><span class="s0">, </span><span class="s1">R.id.settings</span><span class="s0">, </span><span class="s1">R.id.about)</span>
+                <span class="s1">.setOpenableLayout(drawer)</span>
+                <span class="s1">.build()</span><span class="s0">;</span>
+
+        <span class="s1">NavController navController = Navigation.findNavController(</span><span class="s0">this, </span><span class="s1">R.id.nav_host_fragment)</span><span class="s0">;</span>
+        <span class="s1">NavigationUI.setupActionBarWithNavController(</span><span class="s0">this, </span><span class="s1">navController</span><span class="s0">, </span><span class="s1">mAppBarConfiguration)</span><span class="s0">;</span>
+        <span class="s1">NavigationUI.setupWithNavController(navView</span><span class="s0">, </span><span class="s1">navController)</span><span class="s0">;</span>
+
+        <span class="s1">navController.addOnDestinationChangedListener((controller</span><span class="s0">, </span><span class="s1">destination</span><span class="s0">, </span><span class="s1">arguments) -&gt; {</span>
+            <span class="s0">if</span><span class="s1">(destination.getId() == R.id.navigation_share) {</span>
+                <span class="s1">String temp = SharedPreferences.getInstance(</span><span class="s0">this</span><span class="s1">).getTemp()</span><span class="s0">;</span>
+                <span class="s1">String desc = SharedPreferences.getInstance(</span><span class="s0">this</span><span class="s1">).getDesc()</span><span class="s0">;</span>
+                <span class="s1">Intent sendIntent = </span><span class="s0">new </span><span class="s1">Intent()</span><span class="s0">;</span>
+                <span class="s1">sendIntent.setAction(Intent.ACTION_SEND)</span><span class="s0">;</span>
+                <span class="s1">sendIntent.putExtra(Intent.EXTRA_TEXT</span><span class="s0">, </span><span class="s3">&quot;Today's weather is &quot; </span><span class="s1">+ desc + </span><span class="s3">&quot; with temperature: &quot; </span><span class="s1">+ temp )</span><span class="s0">;</span>
+                <span class="s1">sendIntent.setType(</span><span class="s3">&quot;text/plain&quot;</span><span class="s1">)</span><span class="s0">;</span>
+
+                <span class="s0">if </span><span class="s1">(sendIntent.resolveActivity(getPackageManager()) != </span><span class="s0">null</span><span class="s1">) {</span>
+                    <span class="s1">startActivity(sendIntent)</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">} </span><span class="s0">else if </span><span class="s1">(destination.getId() == R.id.navigation_weekly){</span>
+
+            <span class="s1">} </span><span class="s0">else if </span><span class="s1">(destination.getId() == R.id.navigation_today) {</span>
+
+            <span class="s1">}</span>
+        <span class="s1">})</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onSupportNavigateUp() {</span>
+        <span class="s1">NavController navController = Navigation.findNavController(</span><span class="s0">this, </span><span class="s1">R.id.nav_host_fragment)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">NavigationUI.navigateUp(navController</span><span class="s0">, </span><span class="s1">mAppBarConfiguration)</span>
+                <span class="s1">|| </span><span class="s0">super</span><span class="s1">.onSupportNavigateUp()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">DispatchingAndroidInjector&lt;Fragment&gt; supportFragmentInjector() {</span>
+        <span class="s0">return </span><span class="s1">dispatchingAndroidInjector</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onNavigationItemSelected(@NonNull MenuItem item) {</span>
+        <span class="s2">// Handle navigation view item clicks here.</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+
+            <span class="s0">case </span><span class="s1">R.id.settings: {</span>
+                <span class="s1">navigationController.navigateToSettings()</span><span class="s0">;</span>
+                <span class="s0">break;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s2">//close navigation drawer</span>
+        <span class="s1">drawer.closeDrawer(GravityCompat.START)</span><span class="s0">;</span>
+        <span class="s0">return true;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onCreateOptionsMenu(Menu menu) {</span>
+        <span class="s1">MenuInflater inflater = getMenuInflater()</span><span class="s0">;</span>
+        <span class="s1">inflater.inflate(R.menu.main</span><span class="s0">, </span><span class="s1">menu)</span><span class="s0">;</span>
+        <span class="s0">return true;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onOptionsItemSelected(MenuItem item) {</span>
+        <span class="s0">switch </span><span class="s1">(item.getItemId()) {</span>
+           <span class="s2">// case R.id.search:</span>
+                <span class="s2">// User chose the &quot;Search&quot; item, show the app settings UI...</span>
+             <span class="s2">//   return true;</span>
+
+            <span class="s0">default</span><span class="s1">:</span>
+                <span class="s2">// If we got here, the user's action was not recognized.</span>
+                <span class="s2">// Invoke the superclass to handle it.</span>
+                <span class="s0">return super</span><span class="s1">.onOptionsItemSelected(item)</span><span class="s0">;</span>
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>
